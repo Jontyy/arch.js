@@ -1,3 +1,3 @@
-(function(window){
-	window.arch.sandbox = {};
-}(window));
+(function(arch){
+	arch.sandbox = {};
+}(window.arch));

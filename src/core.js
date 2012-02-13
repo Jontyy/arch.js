@@ -1,3 +1,3 @@
-(function(window){
-	window.arch.core = {};
-}(window));
+(function(arch){
+	arch.core = {};
+}(window.arch));
