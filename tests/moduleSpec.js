@@ -1,4 +1,4 @@
-/*global jasmine,describe,it,expect,arch*/
+/*global jasmine,describe,it,expect,arch,spyOn*/
 describe('arch.module',function(){
 	"use strict";
 
@@ -25,6 +25,28 @@ describe('arch.module',function(){
 			expect(function(){
 				arch.module.register('mymodule',1);
 			}).toThrow(new Error('Module constructor must be a function.'));
+		});
+
+		it('Should attempt to link module name with an element',function(){
+			spyOn(document,'getElementById');
+			try{	
+				arch.module.register('map',function(){});
+			}catch(err){}
+			expect(document.getElementById).toHaveBeenCalledWith('map');
+		});
+
+		it('Should throw error if element not found',function(){
+			spyOn(document,'getElementById').andReturn(null);
+			expect(function(){
+				arch.module.register('chat',function(){});
+			}).toThrow(new Error('Module name must be an id of an element.'));
+		});
+
+		it('Should allow to link with DOM elements',function(){
+			spyOn(document,'getElementById').andReturn({
+				nodeType : 1
+			});
+			arch.module.register('chat',function(){});
 		});
 
 	});
