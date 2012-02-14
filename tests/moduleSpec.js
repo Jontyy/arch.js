@@ -51,4 +51,57 @@ describe('arch.module',function(){
 
 	});
 
+	describe('start/startAll',function(){
+		it('Should only accept string parameters',function(){
+			expect(function(){
+				arch.module.start(12);
+			}).toThrow(new Error('Module names must be strings.'));
+		});
+
+		it('Should throw error if module not found',function(){
+			expect(function(){
+				arch.module.start('fakemodule');
+			}).toThrow(new Error('Module not found.'));
+		});
+
+		function createSpyModule(){
+			var ret = {
+				init : jasmine.createSpy('init'),
+				destroy : jasmine.createSpy('destroy')
+			};
+			ret.constructor = jasmine.createSpy('constructor').andReturn({
+				init : ret.init,
+				destroy : ret.destroy
+			});
+			return ret;
+		};
+
+		it('Should construct a module and run init',function(){
+			spyOn(document,'getElementById').andReturn({
+				nodeType : 1
+			});
+			var spy = createSpyModule();
+
+			arch.module.register('map',spy.constructor);
+			arch.module.start('map');
+			expect(spy.constructor).toHaveBeenCalled();
+			expect(spy.init).toHaveBeenCalled();
+		});
+
+		it('Should construct multiple modules',function(){
+			spyOn(document,'getElementById').andReturn({
+				nodeType : 1
+			});
+			var s1 = createSpyModule(), s2 = createSpyModule();
+			arch.module.register('sp1',s1.constructor);
+			arch.module.register('sp2',s2.constructor);
+			arch.module.start('sp1','sp2');
+			expect(s1.constructor).toHaveBeenCalled();
+			expect(s1.init).toHaveBeenCalled();
+
+			expect(s2.constructor).toHaveBeenCalled();
+			expect(s2.init).toHaveBeenCalled();
+		});
+
+	});
 });
