@@ -15,4 +15,18 @@ describe('arch.module',function(){
 	});
 
 
+	describe('register',function(){
+		
+		it('Should only accept string and function params',function(){
+			expect(function(){
+				arch.module.register(1,function(){});
+			}).toThrow(new Error('Module name must be a string.'));
+
+			expect(function(){
+				arch.module.register('mymodule',1);
+			}).toThrow(new Error('Module constructor must be a function'));
+		});
+
+	});
+
 });
