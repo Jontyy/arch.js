@@ -6,7 +6,7 @@ describe('arch.mediator',function(){
 		expect(typeof arch.mediator).toBe('object');
 	});
 
-	it('Should have pub/sub methods',function(){
+	it('Should have pub/sub/unsubscribe methods',function(){
 		expect(typeof arch.mediator.publish).toBe('function');
 		expect(typeof arch.mediator.subscribe).toBe('function');
 		expect(typeof arch.mediator.unsubscribe).toBe('function');
@@ -16,7 +16,18 @@ describe('arch.mediator',function(){
 	describe('pubsub',function(){
 		var id = null, spy = jasmine.createSpy(function(){});	
 
-		it('Should allow to subscribe to events',function(){
+		it('Should only accept string+function parameters',function(){
+			expect( function(){
+				arch.mediator.subscribe({});
+			} ).toThrow(new Error('Event name must be a string.'));
+
+			expect(function(){
+				arch.mediator.subscribe('eventName',{});
+			}).toThrow(new Error('Callback must be a function.'))
+
+		});
+
+		it('Should allow to subscribe to events + return event id',function(){
 			var i = arch.mediator.subscribe('myevent',spy);
 			expect(typeof i).toBe('number');
 			id = i;
@@ -25,6 +36,11 @@ describe('arch.mediator',function(){
 		it('Should publish',function(){
 			arch.mediator.publish('myevent','test');
 			expect(spy).toHaveBeenCalledWith('test');
+		});
+
+		it('Should only call the correct callbacks',function(){
+			arch.mediator.publish('monkey','monkey');
+			expect(spy).wasNotCalledWith('monkey');	
 		});
 
 		it('Should allow unsubscribe',function(){
