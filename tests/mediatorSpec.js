@@ -54,6 +54,10 @@ describe('arch.mediator',function(){
 				expect(spy).toHaveBeenCalledWith('test');
 			});
 
+			it('Should publish with flexible arguments',function(){
+				arch.mediator.publish('myevent','test',12345);
+				expect(spy).toHaveBeenCalledWith('test',12345);
+			});
 			it('Should only call the correct callbacks',function(){
 				arch.mediator.publish('monkey','monkey');
 				expect(spy).wasNotCalledWith('monkey');	
