@@ -12,26 +12,35 @@
 
 
 	arch.mediator = {
-		publish : function(event){
+		publish : function(/*string*/ event){
 			var i,args = Array.prototype.slice.call(arguments,1);
-			console.log(args);
+			typeof event !== 'string' && error('Event name must be a string.');
 			if(channels[event]){
 				for(i in channels[event]){ if(channels[event].hasOwnProperty(i)){
 					channels[event][i].apply(arch.mediator,args);
 				}}
 			}
 		},
-		subscribe : function(event,callback){
-			typeof event !== 'string' && error('First param should be an event name');
-			typeof callback !== 'function' && error('Second param should be a callback function.');
+		subscribe : function(/*string*/ event, /*function*/ callback){
+			typeof event !== 'string' && error('Event name must be a string.');
+			typeof callback !== 'function' && error('Callback must be a function.');
 
+			id +=1;
 			channels[event] = channels[event] || {};
 			channels[event][id] = callback;
-			id +=1;
+			
 			return id;
 		},
-		unsubscribe : function(){
-			
+		unsubscribe : function(/*int*/ id){
+			var i;
+			typeof id !== 'number' && error('unsubscribe expects an integer event id');
+			for(i in channels){if(channels.hasOwnProperty(i)){
+				if(channels[i][id]){
+					delete channels[i][id];
+					return true;
+				}	
+			}}
+			return false;
 		}
 	};
 
