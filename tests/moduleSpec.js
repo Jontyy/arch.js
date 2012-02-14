@@ -24,7 +24,7 @@ describe('arch.module',function(){
 
 			expect(function(){
 				arch.module.register('mymodule',1);
-			}).toThrow(new Error('Module constructor must be a function'));
+			}).toThrow(new Error('Module constructor must be a function.'));
 		});
 
 	});
