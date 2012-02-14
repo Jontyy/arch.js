@@ -1,3 +1,3 @@
-(function(window){
-	window.arch.module = {};
-}(window));
+(function(arch){
+	arch.module = {};
+}(window.arch));
