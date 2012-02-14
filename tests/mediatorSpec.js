@@ -26,6 +26,12 @@ describe('arch.mediator',function(){
 			arch.mediator.publish('myevent','test');
 			expect(spy).toHaveBeenCalledWith('test');
 		});
+
+		it('Should allow unsubscribe',function(){
+			arch.mediator.unsubscribe(id);
+			arch.mediator.publish('myevent','unsubscribed');
+			expect(spy).wasNotCalledWith('unsubscribed');
+		});
 	});
 
 });
