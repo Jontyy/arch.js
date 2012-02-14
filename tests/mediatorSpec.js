@@ -66,6 +66,13 @@ describe('arch.mediator',function(){
 		});
 
 		describe('unsubscribe',function(){
+			it('Should only accept an integer for event id',function(){
+				expect(function(){
+					arch.mediator.unsubscribe('myevent');
+				}).toThrow(new Error('ID must be an integer.'));
+
+			});
+
 			it('Should allow unsubscribe',function(){
 				arch.mediator.unsubscribe(id);
 				arch.mediator.publish('myevent','unsubscribed');

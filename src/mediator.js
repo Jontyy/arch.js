@@ -33,7 +33,9 @@
 		},
 		unsubscribe : function(/*int*/ id){
 			var i;
-			typeof id !== 'number' && error('unsubscribe expects an integer event id');
+			id = parseInt(id,10);
+			isNaN(id) && error('ID must be an integer.');
+
 			for(i in channels){if(channels.hasOwnProperty(i)){
 				if(channels[i][id]){
 					delete channels[i][id];
