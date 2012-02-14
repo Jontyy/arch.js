@@ -33,6 +33,12 @@ describe('arch.mediator',function(){
 			id = i;
 		});
 
+		it('Should provide a different id for each subscription',function(){
+			var i = arch.mediator.subscribe('eventName',function(){});
+			expect(i).toNotEqual(id);
+			expect(i).toBeGreaterThan(id);	
+		});
+
 		it('Should publish',function(){
 			arch.mediator.publish('myevent','test');
 			expect(spy).toHaveBeenCalledWith('test');
