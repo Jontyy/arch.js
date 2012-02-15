@@ -27,27 +27,20 @@ describe('arch.module',function(){
 			}).toThrow(new Error('Module constructor must be a function.'));
 		});
 
-		it('Should attempt to link module name with an element',function(){
-			spyOn(document,'getElementById');
-			try{	
-				arch.module.register('map',function(){});
-			}catch(err){}
-			expect(document.getElementById).toHaveBeenCalledWith('map');
-		});
+		// it('Should attempt to link module name with an element',function(){
+		// 	spyOn(document,'getElementById');
+		// 	try{	
+		// 		arch.module.register('map',function(){});
+		// 	}catch(err){}
+		// 	expect(document.getElementById).toHaveBeenCalledWith('map');
+		// });
 
-		it('Should throw error if element not found',function(){
-			spyOn(document,'getElementById').andReturn(null);
-			expect(function(){
-				arch.module.register('chat',function(){});
-			}).toThrow(new Error('Module name must be an id of an element.'));
-		});
-
-		it('Should allow to link with DOM elements',function(){
-			spyOn(document,'getElementById').andReturn({
-				nodeType : 1
-			});
-			arch.module.register('chat',function(){});
-		});
+		// it('Should allow to link with DOM elements',function(){
+		// 	spyOn(document,'getElementById').andReturn({
+		// 		nodeType : 1
+		// 	});
+		// 	arch.module.register('chat',function(){});
+		// });
 
 	});
 
@@ -74,17 +67,19 @@ describe('arch.module',function(){
 				destroy : ret.destroy
 			});
 			return ret;
-		};
+		}
 
 		it('Should construct a module and run init',function(){
-			spyOn(document,'getElementById').andReturn({
-				nodeType : 1
-			});
-			var spy = createSpyModule();
+			var e = { nodeType : 1, dummyAttr : 'testing'},
+			spy = createSpyModule(), args;
 
+			spyOn(document,'getElementById').andReturn(e);
 			arch.module.register('map',spy.constructor);
 			arch.module.start('map');
 			expect(spy.constructor).toHaveBeenCalled();
+			args = spy.constructor.argsForCall;
+			//ensure it was called with a sandbox object
+			expect(args[0][0] instanceof arch.Sandbox).toBeTruthy();
 			expect(spy.init).toHaveBeenCalled();
 		});
 

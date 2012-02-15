@@ -14,8 +14,8 @@ describe('arch',function(){
       expect(typeof arch.core).toBe('object');
    });
 
-   it('Should have a sandbox property',function(){
-      expect(typeof arch.sandbox).toNotBe('undefined');
+   it('Should have a sandbox constructor',function(){
+      expect(typeof arch.Sandbox).toBe('function');
    });
 
 

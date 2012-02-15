@@ -1,3 +1,6 @@
 (function(arch){
-	arch.sandbox = {};
+	arch.Sandbox = function(elem){
+		this.elem = elem;
+		typeof this.init === 'function' && this.init(elem);	
+	};
 }(window.arch));
