@@ -15,6 +15,7 @@
 	startModule = function(name){
 			var m = constructors[name],
 				elem = document.getElementById(name);
+
 			m = m.call(elem, new arch.Sandbox(elem));
 			if(typeof m !== 'object' || typeof m.init !== 'function' || typeof m.destroy !== 'function'){
 				error('Module constructor should return an object with init and destroy methods.');
@@ -38,6 +39,7 @@
 	};
 	module.stop = function(/*string*/ name){};
 	module.startAll = function(){
+
 	};
 	module.stopAll = function(){};
 

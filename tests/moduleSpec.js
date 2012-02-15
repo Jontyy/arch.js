@@ -1,4 +1,4 @@
-/*global jasmine,describe,it,expect,arch,spyOn*/
+/*global jasmine,describe,it,expect,arch,spyOn,beforeEach*/
 describe('arch.module',function(){
 	"use strict";
 
@@ -26,25 +26,12 @@ describe('arch.module',function(){
 				arch.module.register('mymodule',1);
 			}).toThrow(new Error('Module constructor must be a function.'));
 		});
-
-		// it('Should attempt to link module name with an element',function(){
-		// 	spyOn(document,'getElementById');
-		// 	try{	
-		// 		arch.module.register('map',function(){});
-		// 	}catch(err){}
-		// 	expect(document.getElementById).toHaveBeenCalledWith('map');
-		// });
-
-		// it('Should allow to link with DOM elements',function(){
-		// 	spyOn(document,'getElementById').andReturn({
-		// 		nodeType : 1
-		// 	});
-		// 	arch.module.register('chat',function(){});
-		// });
-
 	});
 
 	describe('start/startAll',function(){
+		//create 2 spy modules
+		var spy1, spy2;
+
 		it('Should only accept string parameters',function(){
 			expect(function(){
 				arch.module.start(12);
@@ -56,6 +43,8 @@ describe('arch.module',function(){
 				arch.module.start('fakemodule');
 			}).toThrow(new Error('Module not found.'));
 		});
+
+
 
 		function createSpyModule(){
 			var ret = {
@@ -69,33 +58,32 @@ describe('arch.module',function(){
 			return ret;
 		}
 
-		it('Should construct a module and run init',function(){
-			var e = { nodeType : 1, dummyAttr : 'testing'},
-			spy = createSpyModule(), args;
-
-			spyOn(document,'getElementById').andReturn(e);
-			arch.module.register('map',spy.constructor);
-			arch.module.start('map');
+		function testSpy(spy){
+			var args;
 			expect(spy.constructor).toHaveBeenCalled();
 			args = spy.constructor.argsForCall;
 			//ensure it was called with a sandbox object
 			expect(args[0][0] instanceof arch.Sandbox).toBeTruthy();
 			expect(spy.init).toHaveBeenCalled();
+		}
+
+		beforeEach(function(){
+			spy1 = createSpyModule();
+			spy2 = createSpyModule();	
 		});
 
-		it('Should construct multiple modules',function(){
-			spyOn(document,'getElementById').andReturn({
-				nodeType : 1
-			});
-			var s1 = createSpyModule(), s2 = createSpyModule();
-			arch.module.register('sp1',s1.constructor);
-			arch.module.register('sp2',s2.constructor);
-			arch.module.start('sp1','sp2');
-			expect(s1.constructor).toHaveBeenCalled();
-			expect(s1.init).toHaveBeenCalled();
 
-			expect(s2.constructor).toHaveBeenCalled();
-			expect(s2.init).toHaveBeenCalled();
+		it('Should construct a module and run init',function(){
+			arch.module.register('map',spy1.constructor);
+			arch.module.start('map');
+			testSpy(spy1);
+		});
+
+		it('It should try to get a dom element with the same name',function(){
+			spyOn(document,'getElementById');
+			arch.module.register('lookForThisNode',spy1.constructor);
+			arch.module.start('lookForThisNode');
+			expect(document.getElementById).toHaveBeenCalledWith('lookForThisNode');
 		});
 
 	});
