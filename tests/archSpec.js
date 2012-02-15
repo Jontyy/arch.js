@@ -18,11 +18,4 @@ describe('arch',function(){
       expect(typeof arch.Sandbox).toBe('function');
    });
 
-
-
-   
-
-
-
-   
 });
