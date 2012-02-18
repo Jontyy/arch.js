@@ -54,7 +54,12 @@
 			startModule(i);	
 		}}
 	};
-	module.stopAll = function() {};
+	module.stopAll = function() {
+		var i;
+		for(i in modules){ if(modules.hasOwnProperty(i)){
+			modules[i].destroy();
+		}}
+	};
 
 	arch.module = module;
 }(window.arch));

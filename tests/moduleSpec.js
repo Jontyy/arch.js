@@ -121,10 +121,15 @@ describe('arch.module', function() {
 
 
 		it('Should call the destroy method', function() {
-			arch.module.register('map', spyModules.map.constructor);
-			arch.module.start('map');
 			arch.module.stop('map');
 			expect(spyModules.map.destroy).toHaveBeenCalled();
+		});
+		describe('stopAll',function(){
+			it('Should call destroy on all modules',function(){
+				arch.module.stopAll();
+				expect(spyModules.map.destroy).toHaveBeenCalled();
+				expect(spyModules.chat.destroy).toHaveBeenCalled();
+			});
 		});
 	});
 });
