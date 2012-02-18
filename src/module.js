@@ -49,7 +49,10 @@
 		}
 	};
 	module.startAll = function() {
-
+		var i;
+		for(i in modules){ if(modules.hasOwnProperty(i)){
+			startModule(i);	
+		}}
 	};
 	module.stopAll = function() {};
 

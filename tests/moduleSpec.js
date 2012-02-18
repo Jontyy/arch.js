@@ -101,6 +101,14 @@ describe('arch.module', function() {
 			expect(document.getElementById).toHaveBeenCalledWith('map');
 		});
 
+		describe('startAll',function(){
+			//we have only registered 2 modules, map and start
+			it('Should call start on all registered modules',function(){
+				arch.module.startAll();
+				expect(spyModules.map.init).toHaveBeenCalled();
+				expect(spyModules.chat.init).toHaveBeenCalled();
+			});
+		});
 	});
 
 	describe('stop/stopAll', function() {
