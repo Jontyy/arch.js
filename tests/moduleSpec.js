@@ -1,12 +1,58 @@
 /*global jasmine,describe,it,expect,arch,spyOn,beforeEach*/
-describe('arch.module',function(){
+describe('arch.module', function() {
 	"use strict";
 
-	it('Should be an object',function(){
+	////////////////////////////////////////////
+	/// Base tests stuff
+	////////////////////////////////////////////
+
+	function createSpyModule() {
+		var ret = {
+			init: jasmine.createSpy('init'),
+			destroy: jasmine.createSpy('destroy')
+		};
+		ret.constructor = jasmine.createSpy('constructor').andReturn({
+			init: ret.init,
+			destroy: ret.destroy
+		});
+		return ret;
+	}
+
+	function resetSpyModule(spy) {
+		spy.init.reset();
+		spy.destroy.reset();
+		spy.constructor.reset();
+	}
+
+	function testSpy(spy) {
+		var args;
+		expect(spy.constructor).toHaveBeenCalled();
+		args = spy.constructor.argsForCall;
+		//ensure it was called with a sandbox object
+		expect(args[0][0] instanceof arch.Sandbox).toBeTruthy();
+		expect(spy.init).toHaveBeenCalled();
+	}
+
+	var spyModules = {
+		'map': createSpyModule(),
+		'chat': createSpyModule()
+	};
+
+	//before each test reset the spies
+	beforeEach(function() {
+		resetSpyModule(spyModules.map);
+		resetSpyModule(spyModules.chat);
+	});
+
+	////////////////////////////////////////////
+	/// End Of Base tests stuff
+	////////////////////////////////////////////
+
+	it('Should be an object', function() {
 		expect(typeof arch.module).toBe('object');
 	});
 
-	it('Should have register,start,stop,startAll,stopAll methods',function(){
+	it('Should have register,start,stop,startAll,stopAll methods', function() {
 		expect(typeof arch.module.register).toBe('function');
 		expect(typeof arch.module.start).toBe('function');
 		expect(typeof arch.module.stop).toBe('function');
@@ -15,76 +61,62 @@ describe('arch.module',function(){
 	});
 
 
-	describe('register',function(){
-		
-		it('Should only accept string and function params',function(){
-			expect(function(){
-				arch.module.register(1,function(){});
+	describe('register', function() {
+
+		it('Should only accept string and function params', function() {
+			expect(function() {
+				arch.module.register(1, function() {});
 			}).toThrow(new Error('Module name must be a string.'));
 
-			expect(function(){
-				arch.module.register('mymodule',1);
+			expect(function() {
+				arch.module.register('mymodule', 1);
 			}).toThrow(new Error('Module constructor must be a function.'));
 		});
 	});
 
-	describe('start/startAll',function(){
-		//create 2 spy modules
-		var spy1, spy2;
+	describe('start/startAll', function() {
 
-		it('Should only accept string parameters',function(){
-			expect(function(){
+		it('Should only accept string parameters', function() {
+			expect(function() {
 				arch.module.start(12);
 			}).toThrow(new Error('Module names must be strings.'));
 		});
 
-		it('Should throw error if module not found',function(){
-			expect(function(){
+		it('Should throw error if module not found', function() {
+			expect(function() {
 				arch.module.start('fakemodule');
 			}).toThrow(new Error('Module not found.'));
 		});
 
-
-
-		function createSpyModule(){
-			var ret = {
-				init : jasmine.createSpy('init'),
-				destroy : jasmine.createSpy('destroy')
-			};
-			ret.constructor = jasmine.createSpy('constructor').andReturn({
-				init : ret.init,
-				destroy : ret.destroy
-			});
-			return ret;
-		}
-
-		function testSpy(spy){
-			var args;
-			expect(spy.constructor).toHaveBeenCalled();
-			args = spy.constructor.argsForCall;
-			//ensure it was called with a sandbox object
-			expect(args[0][0] instanceof arch.Sandbox).toBeTruthy();
-			expect(spy.init).toHaveBeenCalled();
-		}
-
-		beforeEach(function(){
-			spy1 = createSpyModule();
-			spy2 = createSpyModule();	
+		it('Should construct a module and run init', function() {
+			arch.module.register('chat', spyModules.chat.constructor);
+			arch.module.start('chat');
+			testSpy(spyModules.chat);
 		});
 
-
-		it('Should construct a module and run init',function(){
-			arch.module.register('map',spy1.constructor);
+		it('It should try to get a dom element with the same name', function() {
+			spyOn(document, 'getElementById');
+			arch.module.register('map', spyModules.map.constructor);
 			arch.module.start('map');
-			testSpy(spy1);
+			expect(document.getElementById).toHaveBeenCalledWith('map');
 		});
 
-		it('It should try to get a dom element with the same name',function(){
-			spyOn(document,'getElementById');
-			arch.module.register('lookForThisNode',spy1.constructor);
-			arch.module.start('lookForThisNode');
-			expect(document.getElementById).toHaveBeenCalledWith('lookForThisNode');
+	});
+
+	describe('stop/stopAll', function() {
+
+		it('Should only accept string parameters', function() {
+			expect(function() {
+				arch.module.stop(1244, 'test');
+			}).toThrow(new Error('Module names must be strings.'));
 		});
 
+
+		it('Should call the destroy method', function() {
+			arch.module.register('map', spyModules.map.constructor);
+			arch.module.start('map');
+			arch.module.stop('map');
+			expect(spyModules.map.destroy).toHaveBeenCalled();
+		});
 	});
 });

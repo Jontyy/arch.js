@@ -39,7 +39,15 @@
 			}
 		}
 	};
-	module.stop = function( /*string*/ name) {};
+	module.stop = function( /*string*/ name) {
+		var i=0,
+			args = Array.prototype.slice.call(arguments),
+			len = args.length;
+		for(i;i<len;i+=1){
+			typeof args[i] !== 'string' && error('Module names must be strings.');
+			typeof modules[args[i]] === 'object' && modules[args[i]].destroy();
+		}
+	};
 	module.startAll = function() {
 
 	};
