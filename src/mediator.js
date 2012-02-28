@@ -70,9 +70,16 @@
 		},
 
 		validate : function(/*string*/event,/*function*/callback){
+			var i;
 			typeof event !== 'string' && error('Event name must be a string.');
 			typeof callback !== 'function' && error('Callback must be a function.');
-			validation[event] = callback;
+			event = event.split(' ');
+			for(i in event){if(event.hasOwnProperty(i)){
+				if(event[i].length>0){
+					validation[event[i]] = callback;
+				}
+			}}
+			
 		}
 	};
 

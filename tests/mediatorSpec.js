@@ -147,6 +147,17 @@ describe('arch.mediator',function(){
 			expect(subscribeSpy).toHaveBeenCalledWith('testings');
 		});
 
+		it('Should allow validation of multiple channels',function(){
+			var validateSpy = jasmine.createSpy(),args;
+
+			arch.mediator.validate('validate4 validate5',validateSpy);
+			arch.mediator.publish('validate4 validate5','testmultiple');
+			args = validateSpy.argsForCall;
+			expect(args instanceof Array).toBe(true);
+			expect(args.length).toBe(2);
+			expect(args[0]).toEqual(args[1]);
+			expect(args[0][0][0]).toBe('testmultiple');
+		});
 	});
 
 });
