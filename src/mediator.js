@@ -8,6 +8,20 @@
 		//shortcut for throwng an error
 		error = function(message){
 			throw new Error(message);
+		},
+		subscribe = function(channel,func){
+			id +=1;
+			channels[channel] = channels[channel] || {};
+			channels[channel][id] = func;
+			return id;
+		},
+		publish = function(channel,args){
+			var i;
+			if(channels[channel]){
+				for(i in channels[channel]){ if(channels[channel].hasOwnProperty(i)){
+					channels[channel][i].apply(arch.mediator,args);
+				}}
+			}
 		};
 
 
@@ -15,21 +29,24 @@
 		publish : function(/*string*/ event){
 			var i,args = Array.prototype.slice.call(arguments,1);
 			typeof event !== 'string' && error('Event name must be a string.');
-			if(channels[event]){
-				for(i in channels[event]){ if(channels[event].hasOwnProperty(i)){
-					channels[event][i].apply(arch.mediator,args);
-				}}
-			}
+			event = event.split(' ');
+			for(i in event){if(event.hasOwnProperty(i)){
+				if(event[i].length > 0){
+					publish(event[i],args);
+				}
+			}}
 		},
 		subscribe : function(/*string*/ event, /*function*/ callback){
+			var i, ret = [];
 			typeof event !== 'string' && error('Event name must be a string.');
 			typeof callback !== 'function' && error('Callback must be a function.');
-
-			id +=1;
-			channels[event] = channels[event] || {};
-			channels[event][id] = callback;
-			
-			return id;
+			event = event.split(' ');
+			for(i in event){if(event.hasOwnProperty(i)){
+				if(event[i].length>0){
+					ret.push(subscribe(event[i],callback));
+				}
+			}}
+			return ret.length > 1 ? ret : ret[0];
 		},
 		unsubscribe : function(/*int*/ id){
 			var i;
