@@ -84,7 +84,7 @@ describe('arch.mediator',function(){
 
 				arch.mediator.subscribe('event1 event2',spy);
 				arch.mediator.publish('event1 event2','testmultiple');
-				
+
 				args = spy.argsForCall;
 				expect(args instanceof Array).toBe(true);
 				expect(args.length).toBe(2);
@@ -107,6 +107,46 @@ describe('arch.mediator',function(){
 				expect(spy).wasNotCalledWith('unsubscribed');
 			});
 		});
+	});
+
+	describe('validation',function(){
+
+		it('Should only accept string+function parameters',function(){
+			expect(function(){
+				arch.mediator.validate(123,324);
+			}).toThrow('Event name must be a string.');	
+			expect(function(){
+				arch.mediator.validate('test',1234);
+			}).toThrow('Callback must be a function.');
+		});
+
+		it('Should call the validation method',function(){
+			var spy = jasmine.createSpy();
+			arch.mediator.validate('validate1',spy);
+			arch.mediator.publish('validate1',123,456);
+			expect(spy).toHaveBeenCalledWith([123,456]);
+		});
+
+		it('Should not publish if validation fails',function(){
+			var validateSpy = jasmine.createSpy().andReturn(false),
+				subscribeSpy = jasmine.createSpy();
+			arch.mediator.validate('validate2',validateSpy);
+			arch.mediator.subscribe('validate2',subscribeSpy);
+
+			arch.mediator.publish('validate2','testings');
+			expect(subscribeSpy).wasNotCalled();
+		});
+
+		it('Should publish if validation passes',function(){
+			var validateSpy = jasmine.createSpy().andReturn(true),
+				subscribeSpy = jasmine.createSpy();
+			arch.mediator.validate('validate3',validateSpy);
+			arch.mediator.subscribe('validate3',subscribeSpy);
+
+			arch.mediator.publish('validate3','testings');
+			expect(subscribeSpy).toHaveBeenCalledWith('testings');
+		});
+
 	});
 
 });

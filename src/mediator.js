@@ -5,6 +5,8 @@
 
 		channels = {},
 
+		validation = {},
+
 		//shortcut for throwng an error
 		error = function(message){
 			throw new Error(message);
@@ -17,6 +19,11 @@
 		},
 		publish = function(channel,args){
 			var i;
+			if(typeof validation[channel] === 'function'){
+				if (validation[channel](args) === false){
+					return false;
+				}
+			}
 			if(channels[channel]){
 				for(i in channels[channel]){ if(channels[channel].hasOwnProperty(i)){
 					channels[channel][i].apply(arch.mediator,args);
@@ -60,6 +67,12 @@
 				}	
 			}}
 			return false;
+		},
+
+		validate : function(/*string*/event,/*function*/callback){
+			typeof event !== 'string' && error('Event name must be a string.');
+			typeof callback !== 'function' && error('Callback must be a function.');
+			validation[event] = callback;
 		}
 	};
 
