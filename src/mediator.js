@@ -64,7 +64,7 @@
 				if(channels[i][id]){
 					delete channels[i][id];
 					return true;
-				}	
+				}
 			}}
 			return false;
 		},

@@ -11,7 +11,7 @@
 			throw new Error(message);
 		},
 
-		//method for actually starting a module	
+		//method for actually starting a module
 		startModule = function(name) {
 			var m = constructors[name],
 				elem = document.getElementById(name);
@@ -51,7 +51,7 @@
 	module.startAll = function() {
 		var i;
 		for(i in modules){ if(modules.hasOwnProperty(i)){
-			startModule(i);	
+			startModule(i);
 		}}
 	};
 	module.stopAll = function() {
