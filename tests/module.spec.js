@@ -11,10 +11,7 @@ describe('arch.module', function() {
 			init: jasmine.createSpy('init'),
 			destroy: jasmine.createSpy('destroy')
 		};
-		ret.constructor = jasmine.createSpy('constructor').andReturn({
-			init: ret.init,
-			destroy: ret.destroy
-		});
+		ret.constructor = jasmine.createSpy('constructor').andReturn(ret);
 		return ret;
 	}
 
@@ -47,7 +44,6 @@ describe('arch.module', function() {
 	////////////////////////////////////////////
 	/// End Of Base tests stuff
 	////////////////////////////////////////////
-
 	it('Should be an object', function() {
 		expect(typeof arch.module).toBe('object');
 	});
@@ -101,9 +97,9 @@ describe('arch.module', function() {
 			expect(document.getElementById).toHaveBeenCalledWith('map');
 		});
 
-		describe('startAll',function(){
+		describe('startAll', function() {
 			//we have only registered 2 modules, map and start
-			it('Should call start on all registered modules',function(){
+			it('Should call start on all registered modules', function() {
 				arch.module.startAll();
 				expect(spyModules.map.init).toHaveBeenCalled();
 				expect(spyModules.chat.init).toHaveBeenCalled();
@@ -124,12 +120,52 @@ describe('arch.module', function() {
 			arch.module.stop('map');
 			expect(spyModules.map.destroy).toHaveBeenCalled();
 		});
-		describe('stopAll',function(){
-			it('Should call destroy on all modules',function(){
+		describe('stopAll', function() {
+			it('Should call destroy on all modules', function() {
 				arch.module.stopAll();
 				expect(spyModules.map.destroy).toHaveBeenCalled();
 				expect(spyModules.chat.destroy).toHaveBeenCalled();
 			});
+		});
+	});
+
+	describe('events', function() {
+
+		it('Should only allow a hash of string keys and values', function() {
+			var m = createSpyModule();
+			arch.module.register('events1', m.constructor);
+
+			expect(function() {
+				m.events = 123;
+				arch.module.start('events1');
+			}).toThrow('Events must be an object.');
+
+			expect(function() {
+				m.events = {
+					'':123
+				};
+				arch.module.start('events1');
+			}).toThrow('Events must be an object with string keys and values.');
+
+			expect(function(){
+				m.events = {
+					'evt1' : 'Testings'
+				};
+				arch.module.start('events1');
+			}).toThrow("'Testings' is not a method of this module.");
+		});
+
+		it('Should call the mediator with the event,method and module as context',function(){
+			var m = createSpyModule(),
+				sub = spyOn(arch.mediator, 'subscribe');
+
+			arch.module.register('events2',m.constructor);
+			m.handleSearch = function(){};
+			m.events = {
+				'search' : 'handleSearch'
+			};
+			arch.module.start('events2');
+			expect(sub).toHaveBeenCalledWith('search',m.handleSearch,m);
 		});
 	});
 });

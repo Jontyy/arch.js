@@ -128,7 +128,16 @@
 		error = function(message) {
 			throw new Error(message);
 		},
-
+		bindEvents = function(events,module){
+			typeof events !== 'object' && error('Events must be an object.');
+			for(var evt in events){if(events.hasOwnProperty(evt)){
+				if(typeof evt !== 'string' || typeof events[evt] !== 'string'){
+					error('Events must be an object with string keys and values.');
+				}
+				typeof module[events[evt]] !== 'function' && error("'"+events[evt]+"' is not a method of this module.");
+				arch.mediator.subscribe(evt,module[events[evt]],module);
+			}}
+		},
 		//method for actually starting a module
 		startModule = function(name) {
 			var m = constructors[name],
@@ -138,6 +147,7 @@
 			if (typeof m !== 'object' || typeof m.init !== 'function' || typeof m.destroy !== 'function') {
 				error('Module constructor should return an object with init and destroy methods.');
 			}
+			typeof m.events !== 'undefined' && bindEvents(m.events,m);
 			m.init();
 			modules[name] = m;
 		};
