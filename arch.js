@@ -10,9 +10,7 @@
 (function(arch){
 	"use strict";
 
-	var id = 0,
-
-		channels = {},
+	var channels = {},
 
 		validation = {},
 
@@ -20,11 +18,12 @@
 		error = function(message){
 			throw new Error(message);
 		},
-		subscribe = function(channel,func){
-			id +=1;
-			channels[channel] = channels[channel] || {};
-			channels[channel][id] = func;
-			return id;
+		subscribe = function(channel,func,context){
+			channels[channel] = channels[channel] || [];
+			channels[channel].push({
+				callback : func,
+				context : context
+			});
 		},
 		publish = function(channel,args){
 			var i;
@@ -35,9 +34,26 @@
 			}
 			if(channels[channel]){
 				for(i in channels[channel]){ if(channels[channel].hasOwnProperty(i)){
-					channels[channel][i].apply(arch.mediator,args);
+					channels[channel][i].callback.apply(channels[channel][i].context,args);
 				}}
 			}
+		},
+		unsubscribe = function(channel,cb){
+			var i;
+			if(!channels[channel] instanceof Array){
+				return false;
+			}
+			if(typeof cb !== 'function'){
+				//not a function just clear the channel
+				delete channels[channel];
+				return false;
+			}
+			for(i in channels[channel]){if(channels[channel].hasOwnProperty(i)){
+				if(channels[channel][i].callback === cb){
+					delete channels[channel][i];
+					return true;
+				}
+			}}
 		};
 
 
@@ -64,18 +80,15 @@
 			}}
 			return ret.length > 1 ? ret : ret[0];
 		},
-		unsubscribe : function(/*int*/ id){
+		unsubscribe : function(/*string*/ channel, /*function*/ callback){
 			var i;
-			id = parseInt(id,10);
-			isNaN(id) && error('ID must be an integer.');
+			typeof channel !== 'string' && error('Event must be a string.');
+			typeof callback !== 'undefined' && typeof callback !== 'function' && error('Callback must be a function.');
 
-			for(i in channels){if(channels.hasOwnProperty(i)){
-				if(channels[i][id]){
-					delete channels[i][id];
-					return true;
-				}
+			channel = channel.split(' ');
+			for(i in channel){if(channel.hasOwnProperty(i)){
+				unsubscribe(channel[i],callback);
 			}}
-			return false;
 		},
 
 		validate : function(/*string*/event,/*function*/callback){
