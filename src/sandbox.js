@@ -3,7 +3,7 @@
 
 	arch.Sandbox = function(elem){
 		this.elem = elem;
-		typeof this.init === 'function' && this.init(elem);	
+		typeof this.init === 'function' && this.init(elem);
 	};
 	arch.Sandbox.prototype = arch.mediator;
 	
