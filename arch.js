@@ -178,7 +178,7 @@
 	};
 	module.startAll = function() {
 		var i;
-		for(i in modules){ if(modules.hasOwnProperty(i)){
+		for(i in constructors){ if(constructors.hasOwnProperty(i)){
 			startModule(i);
 		}}
 	};
