@@ -25,7 +25,7 @@
 			var m = constructors[name],
 				elem = document.getElementById(name);
 
-			m = m.call(elem, new arch.Sandbox(elem));
+			m = m.call(elem, new arch.Sandbox(elem,arch.core));
 			if (typeof m !== 'object' || typeof m.init !== 'function' || typeof m.destroy !== 'function') {
 				error('Module constructor should return an object with init and destroy methods.');
 			}
@@ -60,7 +60,7 @@
 	};
 	module.startAll = function() {
 		var i;
-		for(i in modules){ if(modules.hasOwnProperty(i)){
+		for(i in constructors){ if(constructors.hasOwnProperty(i)){
 			startModule(i);
 		}}
 	};
