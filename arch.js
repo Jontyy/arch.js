@@ -109,8 +109,9 @@
 (function(arch){
 	"use strict";
 
-	arch.Sandbox = function(elem){
+	arch.Sandbox = function(elem,core){
 		this.elem = elem;
+		this.core = core;
 		typeof this.init === 'function' && this.init(elem);
 	};
 	arch.Sandbox.prototype = arch.mediator;
@@ -143,7 +144,7 @@
 			var m = constructors[name],
 				elem = document.getElementById(name);
 
-			m = m.call(elem, new arch.Sandbox(elem));
+			m = m.call(elem, new arch.Sandbox(elem,arch.core));
 			if (typeof m !== 'object' || typeof m.init !== 'function' || typeof m.destroy !== 'function') {
 				error('Module constructor should return an object with init and destroy methods.');
 			}
