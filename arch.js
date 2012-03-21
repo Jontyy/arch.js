@@ -68,17 +68,16 @@
 				}
 			}}
 		},
-		subscribe : function(/*string*/ event, /*function*/ callback){
-			var i, ret = [];
+		subscribe : function(/*string*/ event, /*function*/ callback, context){
+			var i;
 			typeof event !== 'string' && error('Event name must be a string.');
 			typeof callback !== 'function' && error('Callback must be a function.');
 			event = event.split(' ');
 			for(i in event){if(event.hasOwnProperty(i)){
 				if(event[i].length>0){
-					ret.push(subscribe(event[i],callback));
+					subscribe(event[i],callback,context);
 				}
 			}}
-			return ret.length > 1 ? ret : ret[0];
 		},
 		unsubscribe : function(/*string*/ channel, /*function*/ callback){
 			var i;
