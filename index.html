@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Arch.js by Jontyy</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Arch.js</h1>
+        <p>Modular JavaScript Architecture</p>
+        <p class="view"><a href="https://github.com/Jontyy/arch.js">View the Project on GitHub <small>Jontyy/arch.js</small></a></p>
+        <ul>
+          <li><a href="https://github.com/Jontyy/arch.js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Jontyy/arch.js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Jontyy/arch.js">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>arch.js (Still in development)</h1>
+
+<p>arch.js is an extremely simple framework for structuring JavaScript applications, inspired by the works of <a href="http://www.youtube.com/watch?v=vXjVFPosQHw">Nicholas Zakas</a> and <a href="http://addyosmani.com/largescalejavascript/">Addy Osmani</a>, the idea is to split up all functionality into small, decoupled chunks which communicate via a mediator.</p>
+
+<h2>Obligatory Hello World</h2>
+
+<div class="highlight">
+<pre>    <span class="nx">arch</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s1">'greeting'</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">sb</span><span class="p">){</span>
+       <span class="c1">//this function is used to wrap the module</span>
+       <span class="c1">//the return value must be an object with init and destroy methods</span>
+       <span class="c1">//this function will only be called when the module is started</span>
+
+       <span class="k">return</span> <span class="p">{</span>
+           <span class="nx">init</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+               <span class="nx">sb</span><span class="p">.</span><span class="nx">elem</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">'Hello world'</span><span class="p">;</span>
+           <span class="p">},</span>
+           <span class="nx">destroy</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(){}</span>
+       <span class="p">};</span>
+    <span class="p">});</span>
+    <span class="nx">arch</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">start</span><span class="p">(</span><span class="s1">'greeting'</span><span class="p">);</span>
+    <span class="c1">//note: startAll() can be called if necessary</span>
+</pre>
+</div>
+
+
+<h2>Modules</h2>
+
+<p>Modules are the key idea behind arch, the base functionality is provided by the arch.module object, it has the following methods <code>register</code>,<code>start</code>,<code>startAll</code>,<code>stop</code>, <code>stopAll</code>, you can find detailed information about these below.</p>
+
+<h3>register</h3>
+
+<div class="highlight">
+<pre>    <span class="nx">arch</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="cm">/*string*/</span> <span class="nx">name</span><span class="p">,</span><span class="cm">/*function*/</span> <span class="nx">constructor</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p>Above is the prototype for the register function, as you can see it accepts 2 parameters, a name and a constructor function (not like the constructor that you use 'new' with). The name parameter is unique and is used to identify individual modules. The constructor function will receive a Sandbox object as the first parameter (more on this later). The constructor function is expected to return an object with init and destroy methods, these are used for starting the module and cleaning it up if necessary.</p>
+
+<p>The constructor function is expected to return an object with <code>init</code> and <code>destroy</code> methods, these are for setting up the module and cleaning it up. This constructor function is only called when either <code>arch.module.start</code> or <code>arch.module.startAll</code> are called.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Jontyy">Jontyy</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
